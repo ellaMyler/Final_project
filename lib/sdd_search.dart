@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             TextField(
               controller: _cityController,
-              decoration: InputDecoration(labelText: 'Enter City Name'),
+              decoration: InputDecoration(labelText: 'Enter City Name (<city> , <state>)'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -98,27 +98,22 @@ class _MyHomePageState extends State<MyHomePage> {
       final city = cityDataObjects.firstWhere(
             (data) => data.city.toLowerCase() == cityName.toLowerCase(),
           orElse: () => CityData(
-            city: '',
-            numSoftwareDeveloperJobs: -1,
-            meanSoftwareDeveloperSalaryAdjusted: -1,
-            costOfLivingPlusRentAvg: -1.0,
+            city: 'City not in Dataset',
+            numSoftwareDeveloperJobs: 0,
+            meanSoftwareDeveloperSalaryAdjusted: 0,
+            costOfLivingPlusRentAvg: 0.0,
           )
       );
-      if (city != null) {
-        setState(() {
-          _searchResult = '''
-            City: ${city.city}
-            Number of Software Developer Jobs: ${city.numSoftwareDeveloperJobs}
-            Mean Software Developer Salary (adjusted): \$${city.meanSoftwareDeveloperSalaryAdjusted}
-            Cost of Living Plus Rent avg: \$${city.costOfLivingPlusRentAvg}
-          ''';
-        });
-      } else {
-        setState(() {
-          _searchResult = 'City not found.';
-        });
-      }
-    } catch (e) {
+
+      setState(() {
+        _searchResult = '''
+          City: ${city.city}
+          Number of Software Developer Jobs: ${city.numSoftwareDeveloperJobs}
+          Mean Software Developer Salary: \$${city.meanSoftwareDeveloperSalaryAdjusted}
+          Cost of Living Plus Rent avg: \$${city.costOfLivingPlusRentAvg}
+        ''';
+      });
+        } catch (e) {
       setState(() {
         _searchResult = 'Error occurred: $e';
       });
