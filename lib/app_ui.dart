@@ -4,7 +4,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:final_project/goals.dart';
 import 'package:final_project/settings.dart';
 import 'package:final_project/scheduler.dart';
-import 'Home.dart';
+import 'home.dart';
 import 'videos.dart';
 import 'package:provider/provider.dart';
 
