@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart' as yt;
 import 'app_ui.dart';
@@ -16,6 +17,7 @@ class _VideosState extends State<Videos> {
   late final YoutubePlayerController _controller;
   bool isFullScreen = false;
   String videoTitle = '';
+  double _videoPlayerHeight = 200; // Initial height
 
   // List of video URLs
   final List<String> videoUrls = [
@@ -30,7 +32,6 @@ class _VideosState extends State<Videos> {
     'https://www.youtube.com/watch?v=n3VjKtROscQ',
     'https://www.youtube.com/watch?v=p4KYRuo1C-o',
   ];
-
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _VideosState extends State<Videos> {
       if (_controller.value.isFullScreen != isFullScreen) {
         setState(() {
           isFullScreen = _controller.value.isFullScreen;
+          context.read<UserProvider>().goFullScren(newIsFullScreen: isFullScreen);
           if (isFullScreen) {
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
           } else {
@@ -72,6 +74,12 @@ class _VideosState extends State<Videos> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen size
+    final screenSize = MediaQuery.of(context).size;
+
+    // Set video player height based on screen size
+    _videoPlayerHeight = isFullScreen ? screenSize.height : 200; // Adjust 200 to your desired initial height
+
     return Scaffold(
       appBar: !isFullScreen ? AppBar(
         title: const Text('YouTube Player'),
@@ -86,8 +94,12 @@ class _VideosState extends State<Videos> {
             ),
             builder: (context, player) {
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  player,
+                  SizedBox(
+                    height: _videoPlayerHeight,
+                    child: player,
+                  ),
                   if (!isFullScreen && videoTitle.isNotEmpty) // Display video title if available and not in full screen
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -160,7 +172,7 @@ class _VideosState extends State<Videos> {
                                     var metadata = snapshot.data as VideoMetaData?;
                                     return Text(
                                       metadata?.title ?? 'Loading...', // Display video title or 'Loading...' if not available
-                                      style: TextStyle(fontSize: 16),
+                                      style: const TextStyle(fontSize: 16),
                                     );
                                   }
                                 },
@@ -192,4 +204,18 @@ class VideoMetaData {
   final String thumbnailUrl;
 
   VideoMetaData({required this.title, required this.thumbnailUrl});
+}
+
+
+class UserProvider extends ChangeNotifier {
+  bool isFullScreen;
+  UserProvider ( {
+    this.isFullScreen = false,
+  });
+  void goFullScren({
+    required bool newIsFullScreen,
+  }) async {
+    isFullScreen = newIsFullScreen;
+    notifyListeners ();
+  }
 }
