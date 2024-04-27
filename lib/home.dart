@@ -4,6 +4,44 @@ import 'package:flutter/services.dart';
 import 'package:theme_provider/theme_provider.dart';
 import 'sdd_search.dart';
 
+class JobWidget extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const JobWidget({Key? key, required this.title, required this.value})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        color: Theme.of(context).primaryColor,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 26.0,
+            ),
+          ),
+          const SizedBox(height: 30.0),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 24.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -74,31 +112,67 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Container(
-        alignment: Alignment.topCenter,
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _cityController,
-                    decoration: const InputDecoration(labelText: 'Enter City Name (<city> , <state>)'),
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.topCenter,
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _cityController,
+                      decoration: const InputDecoration(
+                          labelText: 'Enter City Name (<city>, <state>)'),
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _searchCity(_cityController.text);
-                  },
-                  child: const Text('Search'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Text(_searchResult),
-          ],
+                  ElevatedButton(
+                    onPressed: () {
+                      _searchCity(_cityController.text);
+                    },
+                    child: const Text('Search'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              GridView.count(
+                crossAxisCount: 1,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  Visibility(
+                    visible: _searchResult.isNotEmpty,
+                    child: JobWidget(
+                      title: 'Jobs in ' + _cityController.text,
+                      value: _searchResult.isNotEmpty
+                          ? _searchResult.split('\n')[1].trim()
+                          : '',
+                    ),
+                  ),
+                  Visibility(
+                    visible: _searchResult.isNotEmpty,
+                    child: JobWidget(
+                      title: 'Number of Jobs',
+                      value: _searchResult.isNotEmpty
+                          ? _searchResult.split('\n')[2].trim()
+                          : '',
+                    ),
+                  ),
+                  Visibility(
+                    visible: _searchResult.isNotEmpty,
+                    child: JobWidget(
+                      title: 'Mean Salary',
+                      value: _searchResult.isNotEmpty
+                          ? _searchResult.split('\n')[3].trim()
+                          : '',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -106,20 +180,23 @@ class _HomePageState extends State<HomePage> {
 
   void _searchCity(String cityName) async {
     try {
-      String jsonString = await rootBundle.loadString('lib/assets/SoftwareDeveloperIncomeExpensesPerUSACity.json');
+      String jsonString = await rootBundle.loadString(
+          'lib/assets/SoftwareDeveloperIncomeExpensesPerUSACity.json');
       final List<dynamic> cityDataList = json.decode(jsonString);
 
-      final List<CityData> cityDataObjects = cityDataList.map((json) => CityData.fromJson(json)).cast<CityData>().toList();
+      final List<CityData> cityDataObjects = cityDataList
+          .map((json) => CityData.fromJson(json))
+          .cast<CityData>()
+          .toList();
 
       final city = cityDataObjects.firstWhere(
-              (data) => data.city.toLowerCase() == cityName.toLowerCase(),
+          (data) => data.city.toLowerCase() == cityName.toLowerCase(),
           orElse: () => CityData(
-            city: 'City not in Dataset',
-            numSoftwareDeveloperJobs: 0,
-            meanSoftwareDeveloperSalaryAdjusted: 0,
-            costOfLivingPlusRentAvg: 0.0,
-          )
-      );
+                city: 'City not in Dataset',
+                numSoftwareDeveloperJobs: 0,
+                meanSoftwareDeveloperSalaryAdjusted: 0,
+                costOfLivingPlusRentAvg: 0.0,
+              ));
 
       setState(() {
         _searchResult = '''

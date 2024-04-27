@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
                 unselectedItemColor: Color.fromRGBO(174, 222, 252, 1),
               ),
             ),
-            options: MyThemeOptions(const Color.fromRGBO(179, 175, 255, 1.0)),
+            options: const MyThemeOptions(Color.fromRGBO(179, 175, 255, 1.0)),
           ),
           AppTheme(
             id: "dark",
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
                 unselectedItemColor: Color.fromRGBO(160, 21, 62, 1),
               ),
             ),
-            options: MyThemeOptions(const Color.fromRGBO(9, 7, 61, 1)),
+            options: const MyThemeOptions(Color.fromRGBO(9, 7, 61, 1)),
           ),
         ],
         child: Builder(
