@@ -5,6 +5,7 @@ import 'package:final_project/goals.dart';
 import 'package:final_project/settings.dart';
 import 'package:final_project/scheduler.dart';
 import 'Home.dart';
+import 'videos.dart';
 
 class app_ui extends StatefulWidget {
   const app_ui({Key? key}) : super(key: key);
@@ -14,15 +15,16 @@ class app_ui extends StatefulWidget {
 }
 
 class _app_uiState extends State<app_ui> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   final List<Widget> _pages = [
-    const Home(),
     const Scheduler(),
     const Goals(),
-    const videos(),
+    const Home(),
+    const Videos(),
     const Settings(),
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,16 +54,16 @@ class _app_uiState extends State<app_ui> {
           },
           tabs: const [
             GButton(
-              icon: Icons.home,
-              text: 'Home',
-            ),
-            GButton(
               icon: Icons.calendar_month,
               text: 'Schedule',
             ),
             GButton(
               icon: Icons.adjust,
               text: 'Goals',
+            ),
+            GButton(
+              icon: Icons.home,
+              text: 'Home',
             ),
             GButton(
               icon: Icons.ondemand_video_sharp,
