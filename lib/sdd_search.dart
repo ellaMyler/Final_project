@@ -46,3 +46,33 @@ class RegionData {
     );
   }
 }
+
+class skillData{
+  final String? location;
+  final String? company;
+  final String? title;
+  final double? salary;
+  final List<String>? skills2;
+
+
+
+  skillData({
+    required this.location,
+    required this.company,
+    required this.title,
+    required this.salary,
+    required this.skills2,
+
+});
+
+  factory skillData.fromJson(Map<List<String>, dynamic> json){
+    return skillData(
+      location: json['Location'] as String?,
+      company: json['Company'] as String?,
+      title: json['Title'] as String?,
+        salary: json['Salary'] != null ? (json['Salary'] is int ? (json['Salary'] as int).toDouble() : json['Salary'] as double?) : null,
+     skills2: json['Identified_Skills'] as List<String>?,
+    );
+  }
+
+}

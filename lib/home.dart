@@ -73,17 +73,19 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _citySearchController = TextEditingController();
   final TextEditingController _cityCompareController1 = TextEditingController();
   final TextEditingController _cityCompareController2 = TextEditingController();
+  final TextEditingController _regionSearchController = TextEditingController();
+  final TextEditingController _skillSearchController = TextEditingController();
   String _searchResult = '';
   String _compareResult = '';
 
-
-  final TextEditingController _regionSearchController = TextEditingController();
   List<Map<String, String>> _searchResultRegion = [];
+  List<Map<String, String>> _searchResultSkills = [];
 
   double devSelectedElevation = 10.0;
   double mlSelectedElevation = 1.0;
 
   bool showRegionSearch = false;
+  bool showSkillSearch = false;
 
   @override
   Widget build(BuildContext context) {
@@ -101,12 +103,13 @@ class _HomePageState extends State<HomePage> {
                   devSelectedElevation = 10.0;
                   mlSelectedElevation = 1.0;
                   showRegionSearch = false;
-                  _searchResult = '';  // Clear city search results
-                  _compareResult = '';  // Clear comparison results
-                  _searchResultRegion.clear();  // Clear AI/ML data if needed
+                  showSkillSearch = false;
+                  _searchResult = '';
+                  _compareResult = '';
+                  _searchResultRegion.clear();
                 });
               },
-              child: Text('Developer Jobs'),
+              child: const Text('Developer Jobs'),
             ),
           ),
           Expanded(
@@ -120,13 +123,12 @@ class _HomePageState extends State<HomePage> {
                   devSelectedElevation = 1.0;
                   mlSelectedElevation = 10.0;
                   showRegionSearch = true;
-                  _searchResult = '';  // Clear City Search data
-                  _compareResult = '';  // Clear Compare data
-                  // Optionally clear region search results if they shouldn't persist
-                  _searchResultRegion.clear();
+                  showSkillSearch = true;
+                  _searchResult = '';
+                  _compareResult = '';
                 });
               },
-              child: Text('AI and ML Jobs'),
+              child: const Text('AI and ML Jobs'),
             ),
           ),
         ],
@@ -137,218 +139,108 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Visibility(
-                visible: !showRegionSearch, //hide
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _citySearchController,
-                        decoration: const InputDecoration(
-                            labelText: 'Enter City Name'),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _searchCity(_citySearchController.text);
-                      },
-                      child: const Text('Search'),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
+            children: [
               Visibility(
                 visible: !showRegionSearch,
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _cityCompareController1,
-                        decoration: const InputDecoration(
-                            labelText: "Enter City #1"),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _citySearchController,
+                            decoration: const InputDecoration(labelText: 'Enter City Name'),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _searchCity(_citySearchController.text),
+                          child: const Text('Search'),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: TextField(
-                        controller: _cityCompareController2,
-                        decoration: const InputDecoration(
-                            labelText: "Enter City #2"),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _compareCity(_cityCompareController1.text, _cityCompareController2.text);
-                      },
-                      child: const Text('Compare'),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _cityCompareController1,
+                            decoration: const InputDecoration(labelText: "Enter City #1"),
+                          ),
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: _cityCompareController2,
+                            decoration: const InputDecoration(labelText: "Enter City #2"),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _compareCity(_cityCompareController1.text, _cityCompareController2.text),
+                          child: const Text('Compare'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-
-              //AI/ML Search
               Visibility(
                 visible: showRegionSearch,
-                // Show only when region search is active
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _regionSearchController,
-                        decoration: const InputDecoration(
-                            labelText: 'Enter Region (CA, NY)'),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _regionSearchController,
+                            decoration: const InputDecoration(labelText: 'Enter Region (CA, NY)'),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _searchRegion(_regionSearchController.text),
+                          child: const Text('Search'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Visibility(
+                      visible: showSkillSearch,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _skillSearchController,
+                              decoration: const InputDecoration(labelText: 'Search Skillsets (e.g., Python, Machine Learning)'),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => _searchSkills(_skillSearchController.text),
+                            child: const Text('Search by Skills'),
+                          ),
+                        ],
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        _searchRegion(_regionSearchController.text);
-                      },
-                      child: const Text('Search'),
+                    const SizedBox(height: 40),
+                    GridView.count(
+                      crossAxisCount: 1,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: _searchResultRegion.map((job) {
+                        return Wrap(
+                          children: [
+                            JobWidget(title: 'Location:', value: job["Location"] ?? "Not available"),
+                            JobWidget(title: 'Company:', value: job["Company"] ?? "Not available"),
+                            JobWidget(title: 'Job Title:', value: job["Job Title"] ?? "Not available"),
+                            JobWidget(title: 'Job Salary:', value: job["Job Salary"] ?? "Not available"),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              GridView.count(
-                  crossAxisCount: 1,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    Wrap(
-                      children: [
-                        Visibility(
-                          visible: _searchResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Jobs in:',
-                            value: _searchResult
-                                .split('\n')
-                                .length > 0
-                                ? _searchResult.split('\n')[0].trim()
-                                : '',
-                          ),
-                        ),
-                        Visibility(
-                          visible: _searchResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Number of Jobs',
-                            value: _searchResult
-                                .split('\n')
-                                .length > 1
-                                ? _searchResult.split('\n')[1].trim()
-                                : '',
-                          ),
-                        ),
-                        Visibility(
-                          visible: _searchResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Mean Salary',
-                            value: _searchResult
-                                .split('\n')
-                                .length > 2
-                                ? _searchResult.split('\n')[2].trim()
-                                : '',
-                          ),
-                        ),
-                        Visibility(
-                          visible: _searchResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Cost of Living',
-                            value: _searchResult
-                                .split('\n')
-                                .length > 3
-                                ? _searchResult.split('\n')[3].trim()
-                                : '',
-                          ),
-                        ),
-                      ],
-                    )
-                  ]
-              ),
-              const SizedBox(height: 40),
-              GridView.count(
-                  crossAxisCount: 1,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    Wrap(
-                      children: [
-                        Visibility(
-                          visible: _compareResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Jobs in:',
-                            value: _compareResult.split('\n').length > 0
-                                ? _compareResult.split('\n')[0].trim()
-                                : '',
-                          ),
-                        ),
-                        Visibility(
-                          visible: _compareResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Mean Salary',
-                            value: _compareResult.split('\n').length > 1
-                                ? _compareResult.split('\n')[1].trim()
-                                : '',
-                          ),
-                        ),
-                        Visibility(
-                          visible: _compareResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Mean Purchasing Power',
-                            value: _compareResult.split('\n').length > 2
-                                ? _compareResult.split('\n')[2].trim()
-                                : '',
-                          ),
-                        ),
-                      ],
-                    )
-                  ]
-              ),
-
-              const SizedBox(height: 20),
-              Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                if (showRegionSearch && _searchResultRegion.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Text(
-                      "Location: ${_searchResultRegion.first["Location"] ?? 'Not available'}",
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ..._searchResultRegion.map((job) => Column(
-                  children: [
-                    JobWidget(title: 'Company Name:', value: job["Company Name"] ?? "Not available"),
-                    JobWidget(title: 'Job Title:', value: job["Job Title"] ?? "Not available"),
-                    JobWidget(title: 'Job Salary:', value: job["Job Salary"] ?? "Not available"),
-                    Divider(),
-                  ],
-                )).toList(),
-              ],
-            ),
-
-              GridView.count(
-                crossAxisCount: 1,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: _searchResultRegion.map((job) {
-                  return Wrap(
-                    children: [
-                      JobWidget(title: 'Location:', value: job["Location"] ?? "Not available"),
-                      JobWidget(title: 'Company:', value: job["Company"] ?? "Not available"),
-                      JobWidget(title: 'Job Title:', value: job["Job Title"] ?? "Not available"),
-                      JobWidget(title: 'Job Salary:', value: job["Job Salary"] ?? "Not available"),
-                    ],
-                  );
-                }).toList(),
               ),
             ],
           ),
         ),
       ),
-
-
     );
   }
 
@@ -471,6 +363,43 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _searchSkills(String skills) async {
+    try {
+      String jsonString = await rootBundle.loadString('lib/assets/AI_ML_Jobs.json');
+      final List<dynamic> skillDataList = json.decode(jsonString);
+      final List<skillData> skillDataObjects = skillDataList
+          .map((json) => skillData.fromJson(json))
+          .toList();
+          print(skillDataObjects);
+
+      List<String> skillKeywords = skills.split(',').map((s) => s.trim().toLowerCase()).toList();
+
+      List<Map<List<String>, String>> matches = skillDataObjects.where((data) =>
+          skillKeywords.any((skill) => data.skills2?.contains(skill) ?? false)
+      ).map((data) => {
+        "Location": data.location ?? 'Not available',
+        "Company Name": data.company ?? 'Not available',
+        "Job Title": data.title ?? 'Not available',
+        "Job Salary": data.salary?.toString() ?? 'Not available',
+      }).toList();
+      print(skillDataObjects);
+      print('XXXXXXXXXXXXXXXXXX');
+      print(matches);
+
+      setState(() {
+        _searchResultRegion = matches;
+      });
+    } catch (e) {
+      setState(() {
+        _searchResultRegion = [];
+      });
+      print('Error occurred: $e');
+    }
+  }
 
 
 }
+
+
+
+
