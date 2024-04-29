@@ -54,7 +54,7 @@ class _GoalsState extends State<Goals> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               _clearAllGoals();
             },
@@ -75,7 +75,7 @@ class _GoalsState extends State<Goals> {
                         child: Text(_goals[index]),
                       ),
                       IconButton(
-                        icon: Icon(Icons.check),
+                        icon: const Icon(Icons.check),
                         onPressed: () {
                           _toggleGoalCompletion(index);
                         },
@@ -102,7 +102,7 @@ class _GoalsState extends State<Goals> {
             }
           });
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         backgroundColor: Colors.blue,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -126,7 +126,7 @@ class _GoalsState extends State<Goals> {
             },
             child: Container(
               height: 60,
-              margin: EdgeInsets.all(4),
+              margin: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: isCurrentDay ? Colors.blue : Colors.blueGrey[200],
                 borderRadius: BorderRadius.circular(8),
@@ -141,7 +141,7 @@ class _GoalsState extends State<Goals> {
                       color: isCurrentDay ? Colors.white : Colors.black,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     '${day.day}',
                     style: TextStyle(
@@ -170,22 +170,25 @@ class WorkGoalsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Work Goals'),
+        title: const Text('Work Goals'),
       ),
       body: Column(
         children: [
-          TextField(
-            controller: _goalController,
-            decoration: InputDecoration(
-              labelText: 'Enter your goal',
-              suffixIcon: IconButton(
-                onPressed: () {
-                  if (_goalController.text.isNotEmpty) {
-                    goals.add(_goalController.text);
-                    Navigator.pop(context, goals);
-                  }
-                },
-                icon: Icon(Icons.add),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _goalController,
+              decoration: InputDecoration(
+                labelText: 'Enter your goal',
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    if (_goalController.text.isNotEmpty) {
+                      goals.add(_goalController.text);
+                      Navigator.pop(context, goals);
+                    }
+                  },
+                  icon: const Icon(Icons.add),
+                ),
               ),
             ),
           ),
