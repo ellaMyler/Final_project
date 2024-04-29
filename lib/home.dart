@@ -71,7 +71,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _citySearchController = TextEditingController();
-  final TextEditingController _cityCompareController = TextEditingController();
+  final TextEditingController _cityCompareController1 = TextEditingController();
+  final TextEditingController _cityCompareController2 = TextEditingController();
   String _searchResult = '';
   String _compareResult = '';
 
@@ -100,7 +101,9 @@ class _HomePageState extends State<HomePage> {
                   devSelectedElevation = 10.0;
                   mlSelectedElevation = 1.0;
                   showRegionSearch = false;
-                  _searchResultRegion.clear();  // Clear AI/ML data when switching to Developer Jobs
+                  _searchResult = '';  // Clear city search results
+                  _compareResult = '';  // Clear comparison results
+                  _searchResultRegion.clear();  // Clear AI/ML data if needed
                 });
               },
               child: Text('Developer Jobs'),
@@ -117,8 +120,10 @@ class _HomePageState extends State<HomePage> {
                   devSelectedElevation = 1.0;
                   mlSelectedElevation = 10.0;
                   showRegionSearch = true;
-                  _searchResult = '';  // Clear City Search data when switching to AI/ML Jobs
-                  _compareResult = '';  // Clear Compare City when switching
+                  _searchResult = '';  // Clear City Search data
+                  _compareResult = '';  // Clear Compare data
+                  // Optionally clear region search results if they shouldn't persist
+                  _searchResultRegion.clear();
                 });
               },
               child: Text('AI and ML Jobs'),
@@ -160,14 +165,21 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Expanded(
                       child: TextField(
-                        controller: _cityCompareController,
+                        controller: _cityCompareController1,
                         decoration: const InputDecoration(
-                            labelText: "Enter City Name's"),
+                            labelText: "Enter City #1"),
+                      ),
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: _cityCompareController2,
+                        decoration: const InputDecoration(
+                            labelText: "Enter City #2"),
                       ),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        _compareCity(_cityCompareController.text);
+                        _compareCity(_cityCompareController1.text, _cityCompareController2.text);
                       },
                       child: const Text('Compare'),
                     ),
@@ -254,8 +266,47 @@ class _HomePageState extends State<HomePage> {
                   ]
               ),
               const SizedBox(height: 40),
-              // GridView for AI/ML
-            Column(
+              GridView.count(
+                  crossAxisCount: 1,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    Wrap(
+                      children: [
+                        Visibility(
+                          visible: _compareResult.isNotEmpty,
+                          child: JobWidget(
+                            title: 'Jobs in:',
+                            value: _compareResult.split('\n').length > 0
+                                ? _compareResult.split('\n')[0].trim()
+                                : '',
+                          ),
+                        ),
+                        Visibility(
+                          visible: _compareResult.isNotEmpty,
+                          child: JobWidget(
+                            title: 'Mean Salary',
+                            value: _compareResult.split('\n').length > 1
+                                ? _compareResult.split('\n')[1].trim()
+                                : '',
+                          ),
+                        ),
+                        Visibility(
+                          visible: _compareResult.isNotEmpty,
+                          child: JobWidget(
+                            title: 'Mean Purchasing Power',
+                            value: _compareResult.split('\n').length > 2
+                                ? _compareResult.split('\n')[2].trim()
+                                : '',
+                          ),
+                        ),
+                      ],
+                    )
+                  ]
+              ),
+
+              const SizedBox(height: 20),
+              Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 if (showRegionSearch && _searchResultRegion.isNotEmpty)
@@ -350,7 +401,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _compareCity(String cityName1) async {
+  void _compareCity(String cityName1, cityName2) async {
     try {
       String jsonString = await rootBundle.loadString(
           'lib/assets/SoftwareDeveloperIncomeExpensesPerUSACity.json');
@@ -363,31 +414,27 @@ class _HomePageState extends State<HomePage> {
           .toList();
       print('cityCompareObjects: $cityCompareObjects');
 
-      final city = cityCompareObjects.firstWhere(
-              (data) =>
-          data.city
-              .split(',')
-              .first
-              .toLowerCase()
-              .trim() == cityName1
-              .toLowerCase()
-              .split(',')
-              .first
-              .trim(),
-          orElse: () =>
-              CityCompare(
-                city: 'City not in Dataset',
-                meanSoftwareDeveloperSalaryAdjusted: 0,
-                localPurchasingPower: 0.0,
-              ));
-      print('city: $city');
+      final city1 = cityCompareObjects.firstWhere(
+              (data) => data.city.split(',').first.toLowerCase().trim() == cityName1.toLowerCase().split(',').first.trim(),
+          orElse: () => CityCompare(
+            city: 'City not in Dataset (Check Spelling)',
+            meanSoftwareDeveloperSalaryAdjusted: 0,
+            localPurchasingPower: 0.0,
+          ));
+      final city2 = cityCompareObjects.firstWhere(
+              (data) => data.city.split(',').first.toLowerCase().trim() == cityName2.toLowerCase().split(',').first.trim(),
+          orElse: () => CityCompare(
+            city: 'City not in Dataset (Check Spelling)',
+            meanSoftwareDeveloperSalaryAdjusted: 0,
+            localPurchasingPower: 0.0,
+          ));
+      print('city: $city1');
 
       setState(() {
         _compareResult = '''
-          City: ${city.city}
-          Mean Software Developer Salary: \$${city
-            .meanSoftwareDeveloperSalaryAdjusted}
-          Mean Local Purchasing Power: \$${city.localPurchasingPower}
+          City: ${city1.city}${" vs "}${city2.city}
+          Mean Software Developer Salary: \$${city1.meanSoftwareDeveloperSalaryAdjusted}${" vs "}\$${city2.meanSoftwareDeveloperSalaryAdjusted}
+          Mean Local Purchasing Power: \$${city1.localPurchasingPower}${" vs "}\$${city2.localPurchasingPower}
         ''';
       });
     } catch (e) {
