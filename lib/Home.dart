@@ -100,6 +100,7 @@ class _HomePageState extends State<HomePage> {
                   devSelectedElevation = 10.0;
                   mlSelectedElevation = 1.0;
                   showRegionSearch = false;
+                  _searchResultRegion.clear();  // Clear AI/ML data when switching to Developer Jobs
                 });
               },
               child: Text('Developer Jobs'),
@@ -116,6 +117,8 @@ class _HomePageState extends State<HomePage> {
                   devSelectedElevation = 1.0;
                   mlSelectedElevation = 10.0;
                   showRegionSearch = true;
+                  _searchResult = '';  // Clear City Search data when switching to AI/ML Jobs
+                  _compareResult = '';  // Clear Compare City when switching
                 });
               },
               child: Text('AI and ML Jobs'),
