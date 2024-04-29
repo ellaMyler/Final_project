@@ -15,7 +15,7 @@ class JobWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(15.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         color: Theme.of(context).primaryColor,
@@ -27,14 +27,14 @@ class JobWidget extends StatelessWidget {
             title,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 20.0,
+              fontSize: 18.0,
             ),
           ),
           const SizedBox(height: 10.0),
           Text(
             value,
             style: const TextStyle(
-              fontSize: 18.0,
+              fontSize: 15.0,
             ),
           ),
         ],
@@ -71,7 +71,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _citySearchController = TextEditingController();
-  final TextEditingController _cityCompareController = TextEditingController();
+  final TextEditingController _cityCompareController1 = TextEditingController();
+  final TextEditingController _cityCompareController2 = TextEditingController();
   String _searchResult = '';
   String _compareResult = '';
 
@@ -144,14 +145,21 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Expanded(
                     child: TextField(
-                      controller: _cityCompareController,
+                      controller: _cityCompareController1,
                       decoration: const InputDecoration(
-                          labelText: "Enter City Name's"),
+                          labelText: "Enter City #1"),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _cityCompareController2,
+                      decoration: const InputDecoration(
+                          labelText: "Enter City #2"),
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      _compareCity(_cityCompareController.text);
+                      _compareCity(_cityCompareController1.text, _cityCompareController2.text);
                     },
                     child: const Text('Compare'),
                   ),
@@ -267,7 +275,7 @@ class _HomePageState extends State<HomePage> {
       final city = cityDataObjects.firstWhere(
               (data) => data.city.split(',').first.toLowerCase().trim() == cityName.toLowerCase().split(',').first.trim(),
           orElse: () => CityData(
-                city: 'City not in Dataset',
+                city: 'City not in Dataset (Check Spelling)',
                 numSoftwareDeveloperJobs: 0,
                 meanSoftwareDeveloperSalaryAdjusted: 0,
                 costOfLivingPlusRentAvg: 0.0,
@@ -289,7 +297,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _compareCity(String cityName1) async {
+  void _compareCity(String cityName1, cityName2) async {
     try {
       String jsonString = await rootBundle.loadString(
           'lib/assets/SoftwareDeveloperIncomeExpensesPerUSACity.json');
@@ -302,20 +310,27 @@ class _HomePageState extends State<HomePage> {
           .toList();
       print('cityCompareObjects: $cityCompareObjects');
 
-      final city = cityCompareObjects.firstWhere(
+      final city1 = cityCompareObjects.firstWhere(
               (data) => data.city.split(',').first.toLowerCase().trim() == cityName1.toLowerCase().split(',').first.trim(),
           orElse: () => CityCompare(
-            city: 'City not in Dataset',
+            city: 'City not in Dataset (Check Spelling)',
             meanSoftwareDeveloperSalaryAdjusted: 0,
             localPurchasingPower: 0.0,
           ));
-      print('city: $city');
+      final city2 = cityCompareObjects.firstWhere(
+              (data) => data.city.split(',').first.toLowerCase().trim() == cityName2.toLowerCase().split(',').first.trim(),
+          orElse: () => CityCompare(
+            city: 'City not in Dataset (Check Spelling)',
+            meanSoftwareDeveloperSalaryAdjusted: 0,
+            localPurchasingPower: 0.0,
+          ));
+      print('city: $city1');
 
       setState(() {
         _compareResult = '''
-          City: ${city.city}
-          Mean Software Developer Salary: \$${city.meanSoftwareDeveloperSalaryAdjusted}
-          Mean Local Purchasing Power: \$${city.localPurchasingPower}
+          City: ${city1.city}${" vs "}${city2.city}
+          Mean Software Developer Salary: \$${city1.meanSoftwareDeveloperSalaryAdjusted}${" vs "}\$${city2.meanSoftwareDeveloperSalaryAdjusted}
+          Mean Local Purchasing Power: \$${city1.localPurchasingPower}${" vs "}\$${city2.localPurchasingPower}
         ''';
       });
     } catch (e) {
