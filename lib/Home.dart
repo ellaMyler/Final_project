@@ -251,51 +251,29 @@ class _HomePageState extends State<HomePage> {
                   ]
               ),
               const SizedBox(height: 40),
-              GridView.count(
-                  crossAxisCount: 1,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    Wrap(
-                      children: [
-                        Visibility(
-                          visible: _compareResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Jobs in:',
-                            value: _compareResult
-                                .split('\n')
-                                .length > 0
-                                ? _compareResult.split('\n')[0].trim()
-                                : '',
-                          ),
-                        ),
-                        Visibility(
-                          visible: _compareResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Mean Salary',
-                            value: _compareResult
-                                .split('\n')
-                                .length > 1
-                                ? _compareResult.split('\n')[1].trim()
-                                : '',
-                          ),
-                        ),
-                        Visibility(
-                          visible: _compareResult.isNotEmpty,
-                          child: JobWidget(
-                            title: 'Mean Purchasing Power',
-                            value: _compareResult
-                                .split('\n')
-                                .length > 2
-                                ? _compareResult.split('\n')[2].trim()
-                                : '',
-                          ),
-                        ),
-                      ],
-                    )
-                  ]
-              ),
               // GridView for AI/ML
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                if (showRegionSearch && _searchResultRegion.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      "Location: ${_searchResultRegion.first["Location"] ?? 'Not available'}",
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ..._searchResultRegion.map((job) => Column(
+                  children: [
+                    JobWidget(title: 'Company Name:', value: job["Company Name"] ?? "Not available"),
+                    JobWidget(title: 'Job Title:', value: job["Job Title"] ?? "Not available"),
+                    JobWidget(title: 'Job Salary:', value: job["Job Salary"] ?? "Not available"),
+                    Divider(),
+                  ],
+                )).toList(),
+              ],
+            ),
+
               GridView.count(
                 crossAxisCount: 1,
                 shrinkWrap: true,
@@ -303,10 +281,10 @@ class _HomePageState extends State<HomePage> {
                 children: _searchResultRegion.map((job) {
                   return Wrap(
                     children: [
-                      JobWidget(title: 'Location:', value: job["Location"]!),
-                      JobWidget(title: 'Company Name:', value: job["Company Name"]!),
-                      JobWidget(title: 'Job Title:', value: job["Job Title"]!),
-                      JobWidget(title: 'Job Salary:', value: job["Job Salary"]!),
+                      JobWidget(title: 'Location:', value: job["Location"] ?? "Not available"),
+                      JobWidget(title: 'Company:', value: job["Company"] ?? "Not available"),
+                      JobWidget(title: 'Job Title:', value: job["Job Title"] ?? "Not available"),
+                      JobWidget(title: 'Job Salary:', value: job["Job Salary"] ?? "Not available"),
                     ],
                   );
                 }).toList(),
@@ -424,10 +402,8 @@ class _HomePageState extends State<HomePage> {
           .map((json) => RegionData.fromJson(json))
           .toList();
 
-      // Filter entries
       List<Map<String, String>> matches = regionDataObjects.where((data) =>
-      data.location?.toLowerCase().trim() == regionName.toLowerCase().trim()).map((data) =>
-      {
+      data.location?.toLowerCase().trim() == regionName.toLowerCase().trim()).map((data) => {
         "Location": data.location ?? 'Not available',
         "Company Name": data.company ?? 'Not available',
         "Job Title": data.title ?? 'Not available',

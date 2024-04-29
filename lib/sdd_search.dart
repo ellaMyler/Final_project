@@ -40,12 +40,9 @@ class RegionData {
 
   factory RegionData.fromJson(Map<String, dynamic> json) {
     return RegionData(
-      location: json['Location'],
-      company: json['Company Name'],
-      title: json['Title'],
-      salary: (json['Salary'] is int)
-          ? (json['Salary'] as int).toDouble()
-          : json['Salary'], // Handle both int and double
+      location: json['Location'] as String?,
+      company: json['Company'] as String?,
+      title: json['Title'] as String?, salary: json['Salary'] != null ? (json['Salary'] is int ? (json['Salary'] as int).toDouble() : json['Salary'] as double?) : null
     );
   }
 }
