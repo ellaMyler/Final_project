@@ -75,8 +75,14 @@ class _HomePageState extends State<HomePage> {
   String _searchResult = '';
   String _compareResult = '';
 
+
+  final TextEditingController _regionSearchController = TextEditingController();
+  List<Map<String, String>> _searchResultRegion = [];
+
   double devSelectedElevation = 10.0;
   double mlSelectedElevation = 1.0;
+
+  bool showRegionSearch = false;
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +99,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   devSelectedElevation = 10.0;
                   mlSelectedElevation = 1.0;
+                  showRegionSearch = false;
                 });
               },
               child: Text('Developer Jobs'),
@@ -108,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   devSelectedElevation = 1.0;
                   mlSelectedElevation = 10.0;
+                  showRegionSearch = true;
                 });
               },
               child: Text('AI and ML Jobs'),
@@ -122,88 +130,125 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _citySearchController,
-                      decoration: const InputDecoration(
-                          labelText: 'Enter City Name'),
+              Visibility(
+                visible: !showRegionSearch, //hide
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _citySearchController,
+                        decoration: const InputDecoration(
+                            labelText: 'Enter City Name'),
+                      ),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _searchCity(_citySearchController.text);
-                    },
-                    child: const Text('Search'),
-                  ),
-                ],
+                    ElevatedButton(
+                      onPressed: () {
+                        _searchCity(_citySearchController.text);
+                      },
+                      child: const Text('Search'),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _cityCompareController,
-                      decoration: const InputDecoration(
-                          labelText: "Enter City Name's"),
+              Visibility(
+                visible: !showRegionSearch,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _cityCompareController,
+                        decoration: const InputDecoration(
+                            labelText: "Enter City Name's"),
+                      ),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _compareCity(_cityCompareController.text);
-                    },
-                    child: const Text('Compare'),
-                  ),
-                ],
+                    ElevatedButton(
+                      onPressed: () {
+                        _compareCity(_cityCompareController.text);
+                      },
+                      child: const Text('Compare'),
+                    ),
+                  ],
+                ),
+              ),
+
+              //AI/ML Search
+              Visibility(
+                visible: showRegionSearch,
+                // Show only when region search is active
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _regionSearchController,
+                        decoration: const InputDecoration(
+                            labelText: 'Enter Region (CA, NY)'),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _searchRegion(_regionSearchController.text);
+                      },
+                      child: const Text('Search'),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 20),
               GridView.count(
-                crossAxisCount: 1,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  Wrap(
+                  crossAxisCount: 1,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    Visibility(
-                      visible: _searchResult.isNotEmpty,
-                      child: JobWidget(
-                        title: 'Jobs in:',
-                        value: _searchResult.split('\n').length > 0
-                           ? _searchResult.split('\n')[0].trim()
-                            : '',
-                      ),
-                    ),
-                    Visibility(
-                      visible: _searchResult.isNotEmpty,
-                      child: JobWidget(
-                        title: 'Number of Jobs',
-                        value: _searchResult.split('\n').length > 1
-                            ? _searchResult.split('\n')[1].trim()
-                            : '',
-                      ),
-                    ),
-                    Visibility(
-                      visible: _searchResult.isNotEmpty,
-                      child: JobWidget(
-                        title: 'Mean Salary',
-                        value: _searchResult.split('\n').length > 2
-                            ? _searchResult.split('\n')[2].trim()
-                            : '',
+                    Wrap(
+                      children: [
+                        Visibility(
+                          visible: _searchResult.isNotEmpty,
+                          child: JobWidget(
+                            title: 'Jobs in:',
+                            value: _searchResult
+                                .split('\n')
+                                .length > 0
+                                ? _searchResult.split('\n')[0].trim()
+                                : '',
+                          ),
                         ),
-                      ),
-                    Visibility(
-                      visible: _searchResult.isNotEmpty,
-                      child: JobWidget(
-                        title: 'Cost of Living',
-                        value: _searchResult.split('\n').length > 3
-                            ? _searchResult.split('\n')[3].trim()
-                            : '',
-                      ),
-                    ),
-                    ],
-                  )
-                ]
+                        Visibility(
+                          visible: _searchResult.isNotEmpty,
+                          child: JobWidget(
+                            title: 'Number of Jobs',
+                            value: _searchResult
+                                .split('\n')
+                                .length > 1
+                                ? _searchResult.split('\n')[1].trim()
+                                : '',
+                          ),
+                        ),
+                        Visibility(
+                          visible: _searchResult.isNotEmpty,
+                          child: JobWidget(
+                            title: 'Mean Salary',
+                            value: _searchResult
+                                .split('\n')
+                                .length > 2
+                                ? _searchResult.split('\n')[2].trim()
+                                : '',
+                          ),
+                        ),
+                        Visibility(
+                          visible: _searchResult.isNotEmpty,
+                          child: JobWidget(
+                            title: 'Cost of Living',
+                            value: _searchResult
+                                .split('\n')
+                                .length > 3
+                                ? _searchResult.split('\n')[3].trim()
+                                : '',
+                          ),
+                        ),
+                      ],
+                    )
+                  ]
               ),
               const SizedBox(height: 40),
               GridView.count(
@@ -217,7 +262,9 @@ class _HomePageState extends State<HomePage> {
                           visible: _compareResult.isNotEmpty,
                           child: JobWidget(
                             title: 'Jobs in:',
-                            value: _compareResult.split('\n').length > 0
+                            value: _compareResult
+                                .split('\n')
+                                .length > 0
                                 ? _compareResult.split('\n')[0].trim()
                                 : '',
                           ),
@@ -226,7 +273,9 @@ class _HomePageState extends State<HomePage> {
                           visible: _compareResult.isNotEmpty,
                           child: JobWidget(
                             title: 'Mean Salary',
-                            value: _compareResult.split('\n').length > 1
+                            value: _compareResult
+                                .split('\n')
+                                .length > 1
                                 ? _compareResult.split('\n')[1].trim()
                                 : '',
                           ),
@@ -235,7 +284,9 @@ class _HomePageState extends State<HomePage> {
                           visible: _compareResult.isNotEmpty,
                           child: JobWidget(
                             title: 'Mean Purchasing Power',
-                            value: _compareResult.split('\n').length > 2
+                            value: _compareResult
+                                .split('\n')
+                                .length > 2
                                 ? _compareResult.split('\n')[2].trim()
                                 : '',
                           ),
@@ -244,10 +295,28 @@ class _HomePageState extends State<HomePage> {
                     )
                   ]
               ),
+              // GridView for AI/ML
+              GridView.count(
+                crossAxisCount: 1,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: _searchResultRegion.map((job) {
+                  return Wrap(
+                    children: [
+                      JobWidget(title: 'Location:', value: job["Location"]!),
+                      JobWidget(title: 'Company Name:', value: job["Company Name"]!),
+                      JobWidget(title: 'Job Title:', value: job["Job Title"]!),
+                      JobWidget(title: 'Job Salary:', value: job["Job Salary"]!),
+                    ],
+                  );
+                }).toList(),
+              ),
             ],
           ),
         ),
       ),
+
+
     );
   }
 
@@ -265,8 +334,18 @@ class _HomePageState extends State<HomePage> {
       print('cityDataObjects: $cityDataObjects');
 
       final city = cityDataObjects.firstWhere(
-              (data) => data.city.split(',').first.toLowerCase().trim() == cityName.toLowerCase().split(',').first.trim(),
-          orElse: () => CityData(
+              (data) =>
+          data.city
+              .split(',')
+              .first
+              .toLowerCase()
+              .trim() == cityName
+              .toLowerCase()
+              .split(',')
+              .first
+              .trim(),
+          orElse: () =>
+              CityData(
                 city: 'City not in Dataset',
                 numSoftwareDeveloperJobs: 0,
                 meanSoftwareDeveloperSalaryAdjusted: 0,
@@ -278,7 +357,8 @@ class _HomePageState extends State<HomePage> {
         _searchResult = '''
           City: ${city.city}
           Number of Software Developer Jobs: ${city.numSoftwareDeveloperJobs}
-          Mean Software Developer Salary: \$${city.meanSoftwareDeveloperSalaryAdjusted}
+          Mean Software Developer Salary: \$${city
+            .meanSoftwareDeveloperSalaryAdjusted}
           Cost of Living Plus Rent avg: \$${city.costOfLivingPlusRentAvg}
         ''';
       });
@@ -303,18 +383,29 @@ class _HomePageState extends State<HomePage> {
       print('cityCompareObjects: $cityCompareObjects');
 
       final city = cityCompareObjects.firstWhere(
-              (data) => data.city.split(',').first.toLowerCase().trim() == cityName1.toLowerCase().split(',').first.trim(),
-          orElse: () => CityCompare(
-            city: 'City not in Dataset',
-            meanSoftwareDeveloperSalaryAdjusted: 0,
-            localPurchasingPower: 0.0,
-          ));
+              (data) =>
+          data.city
+              .split(',')
+              .first
+              .toLowerCase()
+              .trim() == cityName1
+              .toLowerCase()
+              .split(',')
+              .first
+              .trim(),
+          orElse: () =>
+              CityCompare(
+                city: 'City not in Dataset',
+                meanSoftwareDeveloperSalaryAdjusted: 0,
+                localPurchasingPower: 0.0,
+              ));
       print('city: $city');
 
       setState(() {
         _compareResult = '''
           City: ${city.city}
-          Mean Software Developer Salary: \$${city.meanSoftwareDeveloperSalaryAdjusted}
+          Mean Software Developer Salary: \$${city
+            .meanSoftwareDeveloperSalaryAdjusted}
           Mean Local Purchasing Power: \$${city.localPurchasingPower}
         ''';
       });
@@ -324,4 +415,36 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
+  void _searchRegion(String regionName) async {
+    try {
+      String jsonString = await rootBundle.loadString('lib/assets/AI_ML_Jobs.json');
+      final List<dynamic> regionDataList = json.decode(jsonString);
+      final List<RegionData> regionDataObjects = regionDataList
+          .map((json) => RegionData.fromJson(json))
+          .toList();
+
+      // Filter entries
+      List<Map<String, String>> matches = regionDataObjects.where((data) =>
+      data.location?.toLowerCase().trim() == regionName.toLowerCase().trim()).map((data) =>
+      {
+        "Location": data.location ?? 'Not available',
+        "Company Name": data.company ?? 'Not available',
+        "Job Title": data.title ?? 'Not available',
+        "Job Salary": data.salary?.toString() ?? 'Not available',
+      }).toList();
+
+      setState(() {
+        _searchResultRegion = matches;
+      });
+    } catch (e) {
+      setState(() {
+        _searchResultRegion = [];
+      });
+      print('Error occurred: $e');
+    }
+  }
+
+
+
 }

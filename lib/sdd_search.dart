@@ -24,3 +24,28 @@ class CityData {
 }
 
 
+
+class RegionData {
+  final String? location;
+  final String? company;
+  final String? title;
+  final double? salary;
+
+  RegionData({
+    required this.location,
+    required this.company,
+    required this.title,
+    required this.salary,
+  });
+
+  factory RegionData.fromJson(Map<String, dynamic> json) {
+    return RegionData(
+      location: json['Location'],
+      company: json['Company Name'],
+      title: json['Title'],
+      salary: (json['Salary'] is int)
+          ? (json['Salary'] as int).toDouble()
+          : json['Salary'], // Handle both int and double
+    );
+  }
+}
