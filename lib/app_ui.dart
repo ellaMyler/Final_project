@@ -37,17 +37,19 @@ class _app_uiState extends State<app_ui> {
     final Color selectedItemColor =
         theme.bottomNavigationBarTheme.selectedItemColor ?? Colors.blue;
     bool thingy = context.watch<UserProvider>().isFullScreen;
+    // Calculate the height of the bottom navigation bar based on screen width
+    double bottomNavBarHeight = MediaQuery.of(context).size.width * 0.17;
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: Visibility(
         visible: !thingy, // Show bottom navigation bar if isFullScreen is false
-        child: Padding(
-          padding: const EdgeInsets.all(0.0),
+        child: SizedBox(
+          height: bottomNavBarHeight,
           child: GNav(
             backgroundColor: backgroundColor,
             color: unselectedItemColor,
             activeColor: selectedItemColor,
-            gap: 8,
+            gap: 10,
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
               setState(() {
@@ -57,7 +59,7 @@ class _app_uiState extends State<app_ui> {
             tabs: const [
               GButton(
                 icon: Icons.calendar_month,
-                text: 'Schedule',
+                text: 'Plan',
               ),
               GButton(
                 icon: Icons.adjust,
