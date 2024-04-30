@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:final_project/authentication.dart';
-import 'package:final_project/home.dart';
+import 'package:final_project/authHelper.dart';
 import 'package:final_project/signup.dart';
 
 class Login extends StatelessWidget {
