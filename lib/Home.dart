@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'sdd_search.dart';
 import 'compare_city.dart';
+import 'authentication.dart';
+import 'login.dart';
 
 
 class JobWidget extends StatelessWidget {
@@ -329,12 +331,25 @@ class _HomePageState extends State<HomePage> {
                         );
                       }).toList(),
                     ),
+
                   ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          AuthenticationHelper()
+              .signOut()
+              .then((_) => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (contex) => Login()),
+          ));
+        },
+        child: Icon(Icons.logout),
+        tooltip: 'Logout',
       ),
     );
   }
