@@ -91,6 +91,16 @@ class _SettingsState extends State {
                   icon: Icon(Icons.logout),
                   label: Text ('Logout',),
                 ),
+                SizedBox(height: 50),
+              Text("Authors of Software Developer Salaries:"),
+                Center(
+                    child:Text( "Bruno Bonfrisco and Franco Seveso"),
+                ),
+                SizedBox(height: 15),
+              Text("Authors of AI and ML jobs dataset:"),
+                Center(
+                  child: Text("Abhay Kumar")
+                ),
 // You can add more settings widgets here
               ],
             ),
