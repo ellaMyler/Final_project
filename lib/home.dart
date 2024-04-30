@@ -337,18 +337,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          AuthenticationHelper()
-              .signOut()
-              .then((_) => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (contex) => Login()),
-          ));
-        },
-        child: Icon(Icons.logout),
-        tooltip: 'Logout',
-      ),
     );
   }
 

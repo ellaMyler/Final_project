@@ -16,10 +16,12 @@ class Login extends StatelessWidget {
           // logo
           Column(
             children: [
-              FlutterLogo(
-                size: 55,
+              Image.asset(
+                'lib/assets/bulldog.png',
+                width: 155,
+                height: 155,
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 15),
               Text(
                 'Welcome to the Job Market!',
                 style: TextStyle(fontSize: 24),
@@ -37,9 +39,9 @@ class Login extends StatelessWidget {
           ),
 
           SizedBox(height: 20),
-
-          Row(
-            children: <Widget>[
+        Center(
+          child: Column(
+            children: [
               SizedBox(width: 30),
               Text('New here? ',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
@@ -49,11 +51,12 @@ class Login extends StatelessWidget {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Signup()));
                 },
-                child: Text('Get Registered Now!!',
+                child: Text('Get Registered Now!',
                     style: TextStyle(fontSize: 20, color: Colors.blue)),
               )
             ],
           ),
+        ),
         ],
       ),
     );

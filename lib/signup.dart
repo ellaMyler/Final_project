@@ -13,17 +13,21 @@ class Signup extends StatelessWidget {
           // logo
           Column(
             children: [
-              FlutterLogo(
-                size: 55,
+              Image.asset(
+                'lib/assets/bulldog.png',
+                width: 155,
+                height: 155,
               ),
             ],
           ),
-          SizedBox(height: 50),
-          Text(
-            'Welcome!',
-            style: TextStyle(fontSize: 24),
+          SizedBox(height: 15),
+          Center(
+            child: Text(
+              'Welcome!',
+              style: TextStyle(fontSize: 24),
+            ),
           ),
-
+          SizedBox(height: 15),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SignupForm(),
@@ -33,9 +37,9 @@ class Signup extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Row(
+                Column(
                   children: <Widget>[
-                    Text('Already here  ?',
+                    Text('Already have an account?',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20)),
                     GestureDetector(
@@ -161,6 +165,16 @@ class _SignupFormState extends State<SignupForm> {
               labelText: 'Confirm Password',
               prefixIcon: Icon(Icons.lock_outline),
               border: border,
+              suffixIcon: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+                child: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                ),
+              ),
             ),
             obscureText: true,
             validator: (value) {
@@ -187,23 +201,6 @@ class _SignupFormState extends State<SignupForm> {
               }
               return null;
             },
-          ),
-
-          Row(
-            children: <Widget>[
-              Checkbox(
-                onChanged: (_) {
-                  setState(() {
-                    agree = !agree;
-                  });
-                },
-                value: agree,
-              ),
-              Flexible(
-                child: Text(
-                    'By creating account, I agree to Terms & Conditions and Privacy Policy.'),
-              ),
-            ],
           ),
           SizedBox(
             height: 10,

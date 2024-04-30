@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme_provider/theme_provider.dart';
+import 'authentication.dart';
+import 'login.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -53,6 +55,41 @@ class _SettingsState extends State {
                 Switch(
                   value: _isDarkModeEnabled,
                   onChanged: _toggleDarkMode,
+                ),
+                SizedBox(height: 50),
+                TextButton.icon(
+                    onPressed: (){
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Are you sure you want to log out?"),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    AuthenticationHelper()
+                                        .signOut()
+                                        .then((_) =>
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (contex) => Login())));
+                                  },
+                                  child: Text("Logout"),
+                                ),
+                              ],
+                            );
+                          },
+                      );
+                    },
+                  icon: Icon(Icons.logout),
+                  label: Text ('Logout',),
                 ),
 // You can add more settings widgets here
               ],
