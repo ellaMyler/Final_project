@@ -181,6 +181,93 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 20),
+                    GridView.count(
+                      crossAxisCount: 1,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        Wrap(
+                          children: [
+                            Visibility(
+                              visible: _searchResult.isNotEmpty,
+                              child: JobWidget(
+                                title: 'Jobs in:',
+                                value: _searchResult.split('\n').length > 0
+                                    ? _searchResult.split('\n')[0].trim()
+                                    : '',
+                              ),
+                            ),
+                            Visibility(
+                              visible: _searchResult.isNotEmpty,
+                              child: JobWidget(
+                                title: 'Number of Jobs',
+                                value: _searchResult.split('\n').length > 1
+                                    ? _searchResult.split('\n')[1].trim()
+                                    : '',
+                              ),
+                            ),
+                            Visibility(
+                              visible: _searchResult.isNotEmpty,
+                              child: JobWidget(
+                                title: 'Mean Salary',
+                                value: _searchResult.split('\n').length > 2
+                                    ? _searchResult.split('\n')[2].trim()
+                                    : '',
+                              ),
+                            ),
+                            Visibility(
+                              visible: _searchResult.isNotEmpty,
+                              child: JobWidget(
+                                title: 'Cost of Living',
+                                value: _searchResult.split('\n').length > 3
+                                    ? _searchResult.split('\n')[3].trim()
+                                    : '',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    GridView.count(
+                      crossAxisCount: 1,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        Wrap(
+                          children: [
+                            Visibility(
+                              visible: _compareResult.isNotEmpty,
+                              child: JobWidget(
+                                title: 'Jobs in:',
+                                value: _compareResult.split('\n').length > 0
+                                    ? _compareResult.split('\n')[0].trim()
+                                    : '',
+                              ),
+                            ),
+                            Visibility(
+                              visible: _compareResult.isNotEmpty,
+                              child: JobWidget(
+                                title: 'Mean Salary',
+                                value: _compareResult.split('\n').length > 1
+                                    ? _compareResult.split('\n')[1].trim()
+                                    : '',
+                              ),
+                            ),
+                            Visibility(
+                              visible: _compareResult.isNotEmpty,
+                              child: JobWidget(
+                                title: 'Mean Purchasing Power',
+                                value: _compareResult.split('\n').length > 2
+                                    ? _compareResult.split('\n')[2].trim()
+                                    : '',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
