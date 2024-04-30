@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
         child: Builder(
           builder: (themeContext) => MaterialApp(
             theme: ThemeProvider.themeOf(themeContext).data,
-            home: const app_ui(),
+            home: Login(),
           ),
         ),
       ),
