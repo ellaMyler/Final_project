@@ -149,11 +149,13 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: TextField(
                             controller: _citySearchController,
-                            decoration: const InputDecoration(labelText: 'Enter City Name'),
+                            decoration: const InputDecoration(
+                                labelText: 'Enter City Name'),
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () => _searchCity(_citySearchController.text),
+                          onPressed: () =>
+                              _searchCity(_citySearchController.text),
                           child: const Text('Search'),
                         ),
                       ],
@@ -164,17 +166,21 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: TextField(
                             controller: _cityCompareController1,
-                            decoration: const InputDecoration(labelText: "Enter City #1"),
+                            decoration: const InputDecoration(
+                                labelText: "Enter City #1"),
                           ),
                         ),
                         Expanded(
                           child: TextField(
                             controller: _cityCompareController2,
-                            decoration: const InputDecoration(labelText: "Enter City #2"),
+                            decoration: const InputDecoration(
+                                labelText: "Enter City #2"),
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () => _compareCity(_cityCompareController1.text, _cityCompareController2.text),
+                          onPressed: () =>
+                              _compareCity(_cityCompareController1.text,
+                                  _cityCompareController2.text),
                           child: const Text('Compare'),
                         ),
                       ],
@@ -191,11 +197,13 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: TextField(
                             controller: _regionSearchController,
-                            decoration: const InputDecoration(labelText: 'Enter Region (CA, NY)'),
+                            decoration: const InputDecoration(
+                                labelText: 'Enter Region (CA, NY)'),
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () => _searchRegion(_regionSearchController.text),
+                          onPressed: () =>
+                              _searchRegion(_regionSearchController.text),
                           child: const Text('Search'),
                         ),
                       ],
@@ -208,11 +216,13 @@ class _HomePageState extends State<HomePage> {
                           Expanded(
                             child: TextField(
                               controller: _skillSearchController,
-                              decoration: const InputDecoration(labelText: 'Search Skillsets (e.g., Python, Machine Learning)'),
+                              decoration: const InputDecoration(
+                                  labelText: 'Search Skillsets (e.g., Python, Machine Learning)'),
                             ),
                           ),
                           ElevatedButton(
-                            onPressed: () => _searchSkills(_skillSearchController.text),
+                            onPressed: () =>
+                                _searchSkills(_skillSearchController.text),
                             child: const Text('Search by Skills'),
                           ),
                         ],
@@ -226,10 +236,14 @@ class _HomePageState extends State<HomePage> {
                       children: _searchResultRegion.map((job) {
                         return Wrap(
                           children: [
-                            JobWidget(title: 'Location:', value: job["Location"] ?? "Not available"),
-                            JobWidget(title: 'Company:', value: job["Company"] ?? "Not available"),
-                            JobWidget(title: 'Job Title:', value: job["Job Title"] ?? "Not available"),
-                            JobWidget(title: 'Job Salary:', value: job["Job Salary"] ?? "Not available"),
+                            JobWidget(title: 'Location:',
+                                value: job["Location"] ?? "Not available"),
+                            JobWidget(title: 'Company:',
+                                value: job["Company"] ?? "Not available"),
+                            JobWidget(title: 'Job Title:',
+                                value: job["Job Title"] ?? "Not available"),
+                            JobWidget(title: 'Job Salary:',
+                                value: job["Job Salary"] ?? "Not available"),
                           ],
                         );
                       }).toList(),
@@ -307,26 +321,49 @@ class _HomePageState extends State<HomePage> {
       print('cityCompareObjects: $cityCompareObjects');
 
       final city1 = cityCompareObjects.firstWhere(
-              (data) => data.city.split(',').first.toLowerCase().trim() == cityName1.toLowerCase().split(',').first.trim(),
-          orElse: () => CityCompare(
-            city: 'City not in Dataset (Check Spelling)',
-            meanSoftwareDeveloperSalaryAdjusted: 0,
-            localPurchasingPower: 0.0,
-          ));
+              (data) =>
+          data.city
+              .split(',')
+              .first
+              .toLowerCase()
+              .trim() == cityName1
+              .toLowerCase()
+              .split(',')
+              .first
+              .trim(),
+          orElse: () =>
+              CityCompare(
+                city: 'City not in Dataset (Check Spelling)',
+                meanSoftwareDeveloperSalaryAdjusted: 0,
+                localPurchasingPower: 0.0,
+              ));
       final city2 = cityCompareObjects.firstWhere(
-              (data) => data.city.split(',').first.toLowerCase().trim() == cityName2.toLowerCase().split(',').first.trim(),
-          orElse: () => CityCompare(
-            city: 'City not in Dataset (Check Spelling)',
-            meanSoftwareDeveloperSalaryAdjusted: 0,
-            localPurchasingPower: 0.0,
-          ));
+              (data) =>
+          data.city
+              .split(',')
+              .first
+              .toLowerCase()
+              .trim() == cityName2
+              .toLowerCase()
+              .split(',')
+              .first
+              .trim(),
+          orElse: () =>
+              CityCompare(
+                city: 'City not in Dataset (Check Spelling)',
+                meanSoftwareDeveloperSalaryAdjusted: 0,
+                localPurchasingPower: 0.0,
+              ));
       print('city: $city1');
 
       setState(() {
         _compareResult = '''
           City: ${city1.city}${" vs "}${city2.city}
-          Mean Software Developer Salary: \$${city1.meanSoftwareDeveloperSalaryAdjusted}${" vs "}\$${city2.meanSoftwareDeveloperSalaryAdjusted}
-          Mean Local Purchasing Power: \$${city1.localPurchasingPower}${" vs "}\$${city2.localPurchasingPower}
+          Mean Software Developer Salary: \$${city1
+            .meanSoftwareDeveloperSalaryAdjusted}${" vs "}\$${city2
+            .meanSoftwareDeveloperSalaryAdjusted}
+          Mean Local Purchasing Power: \$${city1
+            .localPurchasingPower}${" vs "}\$${city2.localPurchasingPower}
         ''';
       });
     } catch (e) {
@@ -338,22 +375,27 @@ class _HomePageState extends State<HomePage> {
 
   void _searchRegion(String regionName) async {
     try {
-      String jsonString = await rootBundle.loadString('lib/assets/AI_ML_Jobs.json');
+      String jsonString = await rootBundle.loadString(
+          'lib/assets/AI_ML_Jobs.json');
       final List<dynamic> regionDataList = json.decode(jsonString);
       final List<RegionData> regionDataObjects = regionDataList
           .map((json) => RegionData.fromJson(json))
           .toList();
 
       List<Map<String, String>> matches = regionDataObjects.where((data) =>
-      data.location?.toLowerCase().trim() == regionName.toLowerCase().trim()).map((data) => {
+      data.location?.toLowerCase().trim() == regionName.toLowerCase().trim())
+          .map((data) =>
+      {
         "Location": data.location ?? 'Not available',
-        "Company Name": data.company ?? 'Not available',
+        "Company": data.company ?? 'Not available',
         "Job Title": data.title ?? 'Not available',
         "Job Salary": data.salary?.toString() ?? 'Not available',
       }).toList();
 
       setState(() {
+        print(_searchResultRegion);
         _searchResultRegion = matches;
+        print(_searchResultRegion);
       });
     } catch (e) {
       setState(() {
@@ -365,25 +407,28 @@ class _HomePageState extends State<HomePage> {
 
   void _searchSkills(String skills) async {
     try {
-      String jsonString = await rootBundle.loadString('lib/assets/AI_ML_Jobs.json');
+      String jsonString = await rootBundle.loadString(
+          'lib/assets/AI_ML_Jobs.json');
       final List<dynamic> skillDataList = json.decode(jsonString);
       final List<skillData> skillDataObjects = skillDataList
-          .map((json) => skillData.fromJson(json))
+          .map((json) => skillData.fromJson(json as Map<String, dynamic>))
           .toList();
-          print(skillDataObjects);
 
-      List<String> skillKeywords = skills.split(',').map((s) => s.trim().toLowerCase()).toList();
+      List<String> skillKeywords = skills.split(',').map((s) =>
+          s.trim().toLowerCase()).toList();
 
-      List<Map<List<String>, String>> matches = skillDataObjects.where((data) =>
-          skillKeywords.any((skill) => data.skills2?.contains(skill) ?? false)
-      ).map((data) => {
+      List<Map<String, String>> matches = skillDataObjects.where((data) =>
+      data.skills2 != null && data.skills2!.any((dataSkill) =>
+          skillKeywords.contains(dataSkill.toLowerCase()))
+      ).map((data) =>
+      {
         "Location": data.location ?? 'Not available',
-        "Company Name": data.company ?? 'Not available',
+        "Company": data.company ?? 'Not available',
         "Job Title": data.title ?? 'Not available',
         "Job Salary": data.salary?.toString() ?? 'Not available',
       }).toList();
-      print(skillDataObjects);
-      print('XXXXXXXXXXXXXXXXXX');
+
+      print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx:');
       print(matches);
 
       setState(() {
@@ -396,10 +441,4 @@ class _HomePageState extends State<HomePage> {
       print('Error occurred: $e');
     }
   }
-
-
 }
-
-
-
-

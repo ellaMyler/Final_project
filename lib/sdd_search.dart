@@ -1,3 +1,4 @@
+import 'dart:convert';
 class CityData {
   final String city;
   final int numSoftwareDeveloperJobs;
@@ -65,14 +66,39 @@ class skillData{
 
 });
 
-  factory skillData.fromJson(Map<List<String>, dynamic> json){
+  factory skillData.fromJson(Map<String, dynamic> json) {
+    List<String>? parseSkills(dynamic skills) {
+      if (skills == null) {
+        return [];
+      } else if (skills is String) {
+        // Handles string encoded list
+        try {
+          return jsonDecode(skills)
+              .map((s) => s.toString().trim())
+              .toList();
+        } catch (e) {
+
+          return skills.replaceAll(RegExp(r"^\[|\]$"), '') // Remove brackets
+              .split(',') // Split by comma
+              .map((s) => s.trim().replaceAll(RegExp(r"^'|'$"), '')) // Trim and remove single quotes
+              .toList();
+        }
+      } else if (skills is List) {
+        // Directly handles lists
+        return skills.map((s) => s.toString().trim()).toList();
+      } else {
+        throw FormatException('Unsupported type for skills');
+      }
+    }
+
     return skillData(
       location: json['Location'] as String?,
       company: json['Company'] as String?,
       title: json['Title'] as String?,
-        salary: json['Salary'] != null ? (json['Salary'] is int ? (json['Salary'] as int).toDouble() : json['Salary'] as double?) : null,
-     skills2: json['Identified_Skills'] as List<String>?,
+      salary: json['Salary'] != null ? (json['Salary'] is int ? (json['Salary'] as int).toDouble() : json['Salary'] as double?) : null,
+      skills2: parseSkills(json['Identified_Skills']),
     );
   }
-
 }
+
+
