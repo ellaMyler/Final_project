@@ -1,4 +1,5 @@
 
+import 'package:final_project/app_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/authentication.dart';
 import 'package:final_project/home.dart';
@@ -166,7 +167,7 @@ class _LoginFormState extends State<LoginForm> {
                       .then((result) {
                     if (result == null) {
                       Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => Home()));
+                          MaterialPageRoute(builder: (context) => app_ui()));
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text(
