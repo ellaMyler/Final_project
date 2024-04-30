@@ -52,9 +52,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Job Finder',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: Theme.of(context),
       home: const HomePage(),
     );
   }
